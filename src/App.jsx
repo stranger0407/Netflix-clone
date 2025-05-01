@@ -1,16 +1,19 @@
-import React, { useEffect, useState, lazy, Suspense } from 'react';
-import { Routes, Route, useNavigate, Navigate } from 'react-router-dom';
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from './firebase';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import ErrorBoundary from './pages/ErrorBoundary/ErrorBoundary';
+import React, { useEffect, useState, lazy, Suspense } from "react";
+import { Routes, Route, useNavigate, Navigate } from "react-router-dom";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "./firebase";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import ErrorBoundary from "./pages/ErrorBoundary/ErrorBoundary";
+const Movies = lazy(() => import("./pages/Movies/Movies"));
+const TVShows = lazy(() => import("./pages/TVShows/TVShows"));
+const TVShowPlayer = lazy(() => import("./pages/TVShowsPlayer/TVShowPlayer"));
 
 // Use lazy loading for better performance
-const Home = lazy(() => import('./pages/Home/Home'));
-const Login = lazy(() => import('./pages/Login/Login'));
-const Player = lazy(() => import('./pages/Player/Player'));
-const NotFound = lazy(() => import('./pages/NotFound/NotFound'));
+const Home = lazy(() => import("./pages/Home/Home"));
+const Login = lazy(() => import("./pages/Login/Login"));
+const Player = lazy(() => import("./pages/Player/Player"));
+const NotFound = lazy(() => import("./pages/NotFound/NotFound"));
 
 // Loading spinner component
 const LoadingSpinner = () => (
@@ -23,47 +26,47 @@ const LoadingSpinner = () => (
 // Protected route component
 const ProtectedRoute = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(null);
-  
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setIsAuthenticated(!!user);
     });
-    
+
     return () => unsubscribe();
   }, []);
-  
+
   if (isAuthenticated === null) {
     return <LoadingSpinner />;
   }
-  
+
   return isAuthenticated ? children : <Navigate to="/login" replace />;
 };
 
 const App = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setLoading(false);
       // Only force navigation during initial load
-      if (window.location.pathname === '/') {
+      if (window.location.pathname === "/") {
         if (!user) {
-          navigate('/login');
+          navigate("/login");
         }
       }
     });
-    
+
     return () => unsubscribe();
   }, [navigate]);
-  
+
   if (loading) {
     return <LoadingSpinner />;
   }
-  
+
   return (
     <div className="app">
-      <ToastContainer 
+      <ToastContainer
         position="top-center"
         autoClose={3000}
         hideProgressBar={false}
@@ -75,26 +78,50 @@ const App = () => {
         pauseOnHover
         theme="dark"
       />
-      
+
       <ErrorBoundary>
         <Suspense fallback={<LoadingSpinner />}>
           <Routes>
-            <Route 
-              path="/" 
+            <Route
+              path="/"
               element={
                 <ProtectedRoute>
                   <Home />
                 </ProtectedRoute>
-              } 
+              }
             />
             <Route path="/login" element={<Login />} />
-            <Route 
-              path="/player/:id" 
+            <Route
+              path="/player/:id"
               element={
                 <ProtectedRoute>
                   <Player />
                 </ProtectedRoute>
-              } 
+              }
+            />
+            <Route
+              path="/tvshow/:id"
+              element={
+                <ProtectedRoute>
+                  <TVShowPlayer />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/movies"
+              element={
+                <ProtectedRoute>
+                  <Movies />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/tvshows"
+              element={
+                <ProtectedRoute>
+                  <TVShows />
+                </ProtectedRoute>
+              }
             />
             <Route path="*" element={<NotFound />} />
           </Routes>

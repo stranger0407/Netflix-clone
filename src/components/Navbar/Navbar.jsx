@@ -7,6 +7,7 @@ import bell_icon from '../../assets/bell_icon.svg';
 import profile_img from '../../assets/profile_img.png';
 import caret_icon from '../../assets/caret_icon.svg';
 import { logout } from '../../firebase';
+import { Link } from 'react-router-dom';
 
 const Navbar = () => {
   const navRef = useRef();
@@ -14,14 +15,14 @@ const Navbar = () => {
   const [searchActive, setSearchActive] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   
-  // Links for navigation items
+  // Links for navigation items with actual paths
   const navLinks = [
     { title: 'Home', url: '/' },
-    { title: 'Movies', url: '#' },
-    { title: 'TV Shows', url: '#' },
-    { title: 'News & Popular', url: '#' },
-    { title: 'My List', url: '#' },
-    { title: 'Browse by Language', url: '#' },
+    { title: 'Movies', url: '/movies' },
+    { title: 'TV Shows', url: '/tvshows' },
+    { title: 'News & Popular', url: '/news' },
+    { title: 'My List', url: '/mylist' },
+    { title: 'Browse by Language', url: '/browse' },
   ];
 
   useEffect(() => {
@@ -39,6 +40,20 @@ const Navbar = () => {
       window.removeEventListener('scroll', handleScroll);
     };
   }, []);
+
+  useEffect(() => {
+    // Close mobile menu when clicking outside
+    const handleClickOutside = (event) => {
+      if (isMenuOpen && !event.target.closest('.navbar-left')) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [isMenuOpen]);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -65,10 +80,16 @@ const Navbar = () => {
     setDropdownOpen(false);
   };
 
+  const closeMenu = () => {
+    setIsMenuOpen(false);
+  };
+
   return (
     <div ref={navRef} className="navbar">
       <div className="navbar-left">
-        <img src={logo1} alt="Netflix" />
+        <Link to="/">
+          <img src={logo1} alt="Netflix" />
+        </Link>
         
         {/* Hamburger menu for mobile */}
         <div className={`mobile-menu-btn ${isMenuOpen ? 'active' : ''}`} onClick={toggleMenu}>
@@ -80,7 +101,7 @@ const Navbar = () => {
         <ul className={isMenuOpen ? 'mobile-active' : ''}>
           {navLinks.map((link, index) => (
             <li key={index}>
-              <a href={link.url}>{link.title}</a>
+              <Link to={link.url} onClick={closeMenu}>{link.title}</Link>
             </li>
           ))}
         </ul>
@@ -101,7 +122,7 @@ const Navbar = () => {
           />
         </div>
         
-        <p className="children-link">Children</p>
+        <Link to="/kids" className="children-link">Children</Link>
         
         <div className="notification-icon">
           <img src={bell_icon} alt="Notifications" className="icons" />

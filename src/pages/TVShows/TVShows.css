@@ -1,0 +1,71 @@
+.tv-shows {
+    min-height: 100vh;
+    background-color: #141414;
+    color: white;
+  
+  }
+  
+  .tv-shows-content {
+    padding-top: 130px;
+    padding-bottom: 50px;
+  }
+  
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 4%;
+    margin-bottom: 30px;
+  }
+  
+  .page-header h1 {
+    font-size: 2rem;
+    font-weight: 500;
+    color: white;
+  }
+  
+  .genre-selector select {
+    background-color: rgba(0, 0, 0, 0.4);
+    color: white;
+    padding: 8px 30px 8px 15px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    font-size: 1rem;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white' width='18px' height='18px'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    cursor: pointer;
+  }
+  
+  .genre-selector select:focus {
+    outline: none;
+    border-color: rgba(255, 255, 255, 0.5);
+  }
+  
+  .tv-shows-grid {
+    padding: 0 4%;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 800px) {
+    .page-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 15px;
+    }
+    
+    .page-header h1 {
+      font-size: 1.7rem;
+    }
+  }
+  
+  @media (max-width: 500px) {
+    .tv-shows-content {
+      padding-top: 80px;
+    }
+    
+    .page-header h1 {
+      font-size: 1.5rem;
+    }
+  }

@@ -44,10 +44,20 @@ const Player = () => {
         const data = await response.json();
         
         if (data.results && data.results.length > 0) {
-          setApiData(data.results[0]);
+          // Sort to prefer trailers and newest videos
+          const sortedVideos = [...data.results].sort((a, b) => {
+            // Prioritize trailers
+            if (a.type === 'Trailer' && b.type !== 'Trailer') return -1;
+            if (a.type !== 'Trailer' && b.type === 'Trailer') return 1;
+            
+            // Then sort by date (newest first)
+            return new Date(b.published_at) - new Date(a.published_at);
+          });
+          
+          setApiData(sortedVideos[0]);
           setError(null);
         } else {
-          throw new Error('No video available for this title');
+          throw new Error('No video available for this movie');
         }
       } catch (err) {
         console.error('Error fetching video:', err);
